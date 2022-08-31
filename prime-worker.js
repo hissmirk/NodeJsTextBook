@@ -9,13 +9,11 @@ function findPrimes(start, range) {
     for (let i = start; i < end; i++) {
         for (let j = min; j < Math.sqrt(end); j++) {
             if (i !== j && i % j === 0) {
-                console.log('isPrime = false >>> i : ' + i + ' / j : ' + j);
                 isPrime = false;
                 break;
             }
         }
         if (isPrime) {
-            console.log('primes.push('+i+');');
             primes.push(i);
         }
         isPrime = true;
@@ -26,12 +24,12 @@ if (isMainThread) {
     const max = 10000000;
     const threadCount = 8;
     const threads = new Set();
-    const range = Math.ceil(max - min) / threadCount;
+    const range = Math.ceil((max - min) / threadCount);
     let start = min;
     console.time('prime');
     for (let i = 0; i < threadCount - 1; i++) {
         const wStart = start;
-        threads.add(new Worker(__filename, { workerData: { start: wStart, range} }));
+        threads.add(new Worker(__filename, { workerData: { start: wStart, range } }));
         start += range;
     }
     threads.add(new Worker(__filename, { workerData: { start, range: range + ((max - min + 1) % threadCount) } } ));
@@ -48,7 +46,7 @@ if (isMainThread) {
         });
         worker.on('message', (msg) => {
             primes = primes.concat(msg);
-        })
+        });
     }
 } else {
     findPrimes(workerData.start, workerData.range);
